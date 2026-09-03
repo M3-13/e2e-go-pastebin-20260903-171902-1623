@@ -50,6 +50,8 @@ func (a *API) handleCreate(w http.ResponseWriter, r *http.Request) {
 	// negative Werte sowie Werte größer als 10 Jahre. AC-13 („positive Ganzzahl")
 	// ist als Ausschluss negativer Werte plus Maximalbegrenzung zu verstehen,
 	// NICHT als Ablehnung von 0.
+	now := time.Now().UTC()
+
 	var expiresAt *time.Time
 	if req.ExpiresInSeconds != nil {
 		secs := *req.ExpiresInSeconds
@@ -62,7 +64,7 @@ func (a *API) handleCreate(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 		if secs > 0 {
-			exp := time.Now().UTC().Add(time.Duration(secs) * time.Second)
+			exp := now.Add(time.Duration(secs) * time.Second)
 			expiresAt = &exp
 		}
 	}
@@ -77,7 +79,7 @@ func (a *API) handleCreate(w http.ResponseWriter, r *http.Request) {
 		ID:        id,
 		Content:   req.Content,
 		Language:  req.Language,
-		CreatedAt: time.Now().UTC(),
+		CreatedAt: now,
 		ExpiresAt: expiresAt,
 	}
 
