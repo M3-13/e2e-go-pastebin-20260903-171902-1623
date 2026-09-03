@@ -43,6 +43,9 @@ func (a *API) handleCreate(w http.ResponseWriter, r *http.Request) {
 		req.Language = "text"
 	}
 
+	// expires_in_seconds: 0 or missing means "never expires" (expiresAt stays nil).
+	// Per Tech-Lead clarification (FR-1 "0 oder fehlend = läuft nie ab"), AC-13's
+	// "positive Ganzzahl" excludes only negative values; only values > 0 set an expiry.
 	var expiresAt *time.Time
 	if req.ExpiresInSeconds != nil {
 		seconds := *req.ExpiresInSeconds
