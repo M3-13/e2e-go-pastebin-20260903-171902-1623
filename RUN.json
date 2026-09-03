@@ -8,6 +8,7 @@
       "kind": "server",
       "install": [],
       "build": [["go", "build", "-o", "pastebin-api", "."]],
+      "test": ["go", "test", "./..."],
       "start": ["go", "run", "."],
       "port": 8080,
       "health": { "path": "/healthz", "expect_status": [200] }
