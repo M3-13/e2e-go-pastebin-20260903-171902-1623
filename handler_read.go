@@ -7,6 +7,7 @@ import (
 
 func (a *API) handleGet(w http.ResponseWriter, r *http.Request) {
 	id := r.PathValue("id")
+	w.Header().Set("Cache-Control", "no-store")
 
 	a.store.mu.RLock()
 	p, ok := a.store.pastes[id]
@@ -25,6 +26,5 @@ func (a *API) handleGet(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	w.Header().Set("Cache-Control", "no-store")
 	writeJSON(w, http.StatusOK, p)
 }
