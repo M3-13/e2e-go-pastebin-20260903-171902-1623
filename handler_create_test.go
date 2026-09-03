@@ -144,6 +144,27 @@ func TestCreatePasteStoresDefaults(t *testing.T) {
 	}
 }
 
+func TestCreatePasteZeroExpiresMeansNever(t *testing.T) {
+	api := newTestAPI()
+	rec := postPaste(api, `{"content":"hello","expires_in_seconds":0}`)
+
+	if rec.Code != http.StatusCreated {
+		t.Fatalf("expected 201, got %d", rec.Code)
+	}
+	id := decodeID(t, rec)
+
+	api.store.mu.RLock()
+	paste, ok := api.store.pastes[id]
+	api.store.mu.RUnlock()
+
+	if !ok {
+		t.Fatalf("paste %q not stored", id)
+	}
+	if paste.ExpiresAt != nil {
+		t.Fatalf("expected nil expires_at for 0, got %v", paste.ExpiresAt)
+	}
+}
+
 func TestCreatePastePositiveExpiresSetsExpiresAt(t *testing.T) {
 	api := newTestAPI()
 	rec := postPaste(api, `{"content":"hello","expires_in_seconds":60}`)
